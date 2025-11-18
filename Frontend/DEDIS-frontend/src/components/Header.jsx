@@ -10,7 +10,10 @@ export function Header() {
 					Home
 				</a>
 				<a href="/404" class={url == '/404' && 'active'}>
-					404
+					404test
+				</a>
+				<a href="/stock" class={url == '/stock' && 'active'}>
+					Stock
 				</a>
 			</nav>
 		</header>

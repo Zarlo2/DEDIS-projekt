@@ -1,39 +1,39 @@
-import preactLogo from '../../assets/preact.svg';
 import './style.css';
 
 export function Home() {
-	return (
-		<div class="home">
-			<a href="https://preactjs.com" target="_blank">
-				<img src={preactLogo} alt="Preact logo" height="160" width="160" />
-			</a>
-			<h1>Get Started building Vite-powered Preact Apps </h1>
-			<section>
-				<Resource
-					title="Learn Preact"
-					description="If you're new to Preact, try the interactive tutorial to learn important concepts"
-					href="https://preactjs.com/tutorial"
-				/>
-				<Resource
-					title="Differences to React"
-					description="If you're coming from React, you may want to check out our docs to see where Preact differs"
-					href="https://preactjs.com/guide/v10/differences-to-react"
-				/>
-				<Resource
-					title="Learn Vite"
-					description="To learn more about Vite and how you can customize it to fit your needs, take a look at their excellent documentation"
-					href="https://vitejs.dev"
-				/>
-			</section>
-		</div>
-	);
-}
+  return (
+    <div class="home">
+      {/* Hero Section */}
+      <header class="hero">
+        <h1>StockPulse</h1>
+        <p>Your real-time stock market dashboard</p>
 
-function Resource(props) {
-	return (
-		<a href={props.href} target="_blank" class="resource">
-			<h2>{props.title}</h2>
-			<p>{props.description}</p>
-		</a>
-	);
+      </header>
+
+      {/* Market Highlights */}
+      <section id="features" class="market-features">
+        <div class="feature-card">
+          <h2>Top Gainers</h2>
+          <p>See which stocks are on the rise today.</p>
+        </div>
+        <div class="feature-card">
+          <h2>Top Losers</h2>
+          <p>Track which stocks are falling the most.</p>
+        </div>
+        <div class="feature-card">
+          <h2>Trending Stocks</h2>
+          <p>Discover the stocks everyone is talking about.</p>
+        </div>
+        <div class="feature-card">
+          <h2>News & Insights</h2>
+          <p>Stay up-to-date with the latest market news.</p>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer class="footer">
+        <p>&copy; 2025 StockPulse. All rights reserved.</p>
+      </footer>
+    </div>
+  );
 }

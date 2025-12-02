@@ -21,7 +21,7 @@ export function Header() {
 		<header>
 			<nav>
 				<a href="/" class={url == '/' && 'active'}>Home</a>
-				<a href="/404" class={url == '/404' && 'active'}>404test</a>
+
 
 
 				{/* Show Login/Register if not logged in */}

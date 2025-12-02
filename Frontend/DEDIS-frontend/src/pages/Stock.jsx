@@ -22,45 +22,139 @@ ChartJS.register(
   Legend
 );
 
+// ----------------------
+// Metal Fetch Component
+// ----------------------
+class MetalPriceComponent {
+  async getPrice() {
+    throw new Error("getPrice() not implemented");
+  }
+}
+
+// ----------------------
+// Concrete Metal Fetchers
+// ----------------------
+class GoldFetcher extends MetalPriceComponent {
+  async getPrice() {
+    const res = await fetch("/api/gold");
+    const json = await res.json();
+    return json.price ? parseFloat(json.price) : null;
+  }
+}
+
+class SilverFetcher extends MetalPriceComponent {
+  async getPrice() {
+    const res = await fetch("/api/silver");
+    const json = await res.json();
+    return json.price ? parseFloat(json.price) : null;
+  }
+}
+
+class TiberiumFetcher extends MetalPriceComponent {
+  async getPrice() {
+    const res = await fetch("/api/tiberium");
+    const json = await res.json();
+    return json.price ? parseFloat(json.price) : null;
+  }
+}
+
+// ----------------------
+// Decorator Base
+// ----------------------
+class MetalPriceDecorator extends MetalPriceComponent {
+  constructor(component) {
+    super();
+    this.component = component;
+  }
+
+  async getPrice() {
+    return await this.component.getPrice();
+  }
+}
+
+// ----------------------
+// Error Handling Decorator
+// ----------------------
+class SafeMetalFetcher extends MetalPriceDecorator {
+  async getPrice() {
+    try {
+      return await super.getPrice();
+    } catch (err) {
+      console.error("Metal fetch error:", err);
+      return null; // fail safely
+    }
+  }
+}
+
+// ----------------------
+// React Component
+// ----------------------
 export function Stock() {
   const [dataPoints, setDataPoints] = useState([]);
   const intervalRef = useRef(null);
 
-  const fetchGoldPrice = async () => {
-    try {
-      const res = await fetch('/api/gold');
-      const json = await res.json();
+  // Instantiate metals with decorators
+  const goldService = new SafeMetalFetcher(new GoldFetcher());
+  const silverService = new SafeMetalFetcher(new SilverFetcher());
+  const tiberiumService = new SafeMetalFetcher(new TiberiumFetcher());
 
-      if (!json.price) return; // skip if no price
+  const fetchPrices = async () => {
+    const time = new Date().toLocaleTimeString();
 
-      const price = parseFloat(json.price);
-      const time = new Date().toLocaleTimeString();
+    const [goldPrice, silverPrice, tiberiumPrice] = await Promise.all([
+      goldService.getPrice(),
+      silverService.getPrice(),
+      tiberiumService.getPrice()
+    ]);
 
-      setDataPoints(prev => [...prev.slice(-49), { time, price }]); // keep last 50 points
-    } catch (err) {
-      console.error('Error fetching gold price:', err);
-    }
+    setDataPoints(prev => [
+      ...prev.slice(-49), // keep last 50 points
+      {
+        time,
+        gold: goldPrice,
+        silver: silverPrice,
+        tiberium: tiberiumPrice
+      }
+    ]);
   };
 
   useEffect(() => {
-    fetchGoldPrice(); // initial fetch
-    intervalRef.current = setInterval(fetchGoldPrice, 10000); // every 10 seconds
+    fetchPrices(); // initial fetch
+    intervalRef.current = setInterval(fetchPrices, 10000); // update every 10s
     return () => clearInterval(intervalRef.current);
   }, []);
 
   if (dataPoints.length === 0) {
-    return <div style={{ padding: '2rem' }}>Loading live gold chart...</div>;
+    return <div style={{ padding: '2rem' }}>Loading live metals chart...</div>;
   }
 
   const chartData = {
     labels: dataPoints.map(dp => dp.time),
     datasets: [
       {
-        label: 'Gold Price (USD/oz)',
-        data: dataPoints.map(dp => dp.price),
+        label: 'Gold (USD/oz)',
+        data: dataPoints.map(dp => dp.gold),
         fill: false,
         borderColor: '#DAA520',
         backgroundColor: '#FFD700',
+        tension: 0.2,
+        pointRadius: 3
+      },
+      {
+        label: 'Silver (USD/oz)',
+        data: dataPoints.map(dp => dp.silver),
+        fill: false,
+        borderColor: '#C0C0C0',
+        backgroundColor: '#B0B0B0',
+        tension: 0.2,
+        pointRadius: 3
+      },
+      {
+        label: 'Tiberium (Fake USD)',
+        data: dataPoints.map(dp => dp.tiberium),
+        fill: false,
+        borderColor: '#00FF00',
+        backgroundColor: '#00AA00',
         tension: 0.2,
         pointRadius: 3
       }
@@ -71,8 +165,8 @@ export function Stock() {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      title: { display: true, text: 'Live Gold Price (USD/oz)', font: { size: 24 } },
-      legend: { display: false },
+      title: { display: true, text: 'Live Metal Prices', font: { size: 24 } },
+      legend: { display: true, position: 'top' },
       tooltip: { mode: 'index', intersect: false }
     },
     scales: {
@@ -86,7 +180,6 @@ export function Stock() {
 
   return (
     <div style={{ padding: '2rem', fontFamily: 'sans-serif', height: '600px' }}>
-      <h1 style={{ marginBottom: '1rem' }}>Live Gold Price Chart</h1>
       <Line data={chartData} options={options} />
     </div>
   );

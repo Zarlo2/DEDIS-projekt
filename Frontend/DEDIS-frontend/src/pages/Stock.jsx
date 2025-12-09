@@ -1,4 +1,4 @@
-// @ts-nocheck
+
 import { useState, useEffect, useRef } from 'preact/hooks';
 import { Line } from 'react-chartjs-2';
 import {
@@ -120,7 +120,7 @@ export function Stock() {
 
   useEffect(() => {
     fetchPrices(); // initial fetch
-    intervalRef.current = setInterval(fetchPrices, 10000); // update every 10s
+    intervalRef.current = setInterval(fetchPrices, 1000); // update every 10s
     return () => clearInterval(intervalRef.current);
   }, []);
 
@@ -150,7 +150,7 @@ export function Stock() {
         pointRadius: 3
       },
       {
-        label: 'Tiberium (Fake USD)',
+        label: 'Tiberium (USD/oz)',
         data: dataPoints.map(dp => dp.tiberium),
         fill: false,
         borderColor: '#00FF00',

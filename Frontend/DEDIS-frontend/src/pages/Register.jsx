@@ -33,7 +33,7 @@ return (
 <div style="padding:2rem; max-width:400px; margin:auto;">
 <h1>Register</h1>
 <form onSubmit={submit}>
-<input value={email} onInput={e=>setEmail(e.target.value)} placeholder="Email" /><br /><br />
+<input type="email" value={email} onInput={e=>setEmail(e.target.value)} placeholder="Email" required/><br /><br />
 <input value={password} onInput={e=>setPassword(e.target.value)} type="password" placeholder="Password" /><br /><br />
 <button>Register</button>
 </form>

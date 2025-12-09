@@ -1,12 +1,11 @@
-// server.js
 import Fastify from "fastify";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import pool from "./dbConn.js";
-import fetch from "node-fetch"; // Node.js fetch polyfill
+import fetch from "node-fetch"; 
 
 const fastify = Fastify({ logger: true });
-const JWT_SECRET = "SUPER_SECRET_KEY_CHANGE_ME";
+const JWT_SECRET = "qiqndq281742kafqwjh";
 
 // ----------------------
 // Component Interface
@@ -17,14 +16,7 @@ class MetalPriceComponent {
   }
 }
 
-// ----------------------
-// Concrete Component
-// ----------------------
-class BaseMetalPrice extends MetalPriceComponent {
-  async getPrice() {
-    return null; // Base component does nothing
-  }
-}
+
 
 // ----------------------
 // Decorator Base
@@ -99,9 +91,7 @@ class SilverPriceDecorator extends MetalPriceDecorator {
   }
 }
 
-// ----------------------
-// TIBERIUM DECORATOR
-// ----------------------
+
 class TiberiumPriceDecorator extends MetalPriceComponent {
   constructor() {
     super();
@@ -109,9 +99,9 @@ class TiberiumPriceDecorator extends MetalPriceComponent {
   }
 
   async getPrice() {
-    // Simulate price change: random walk
-    const change = (Math.random() - 0.5) * 2; // -1 to +1
-    this.price = Math.max(10, this.price + change); // prevent negative prices
+    // Simulate price change random walk
+    const change = (Math.random() - 0.5) * 2; 
+    this.price = Math.max(10, this.price + change); // prevent negative prices cause the economy would implode
     return parseFloat(this.price.toFixed(2));
   }
 }
@@ -120,7 +110,6 @@ class TiberiumPriceDecorator extends MetalPriceComponent {
 // Instantiate Services
 // ----------------------
 const apiKey = "goldapi-7dnz85smiofobm3-io"; // replace with a new key if switching api
-const baseService = new BaseMetalPrice();
 const goldService = new GoldPriceDecorator(baseService, apiKey);
 const silverService = new SilverPriceDecorator(baseService, apiKey);
 const tiberiumService = new TiberiumPriceDecorator();

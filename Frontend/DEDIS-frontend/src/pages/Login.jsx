@@ -35,10 +35,12 @@ export function Login() {
 			<h1>Login</h1>
 			<form onSubmit={submit}>
 				<input
-					value={email}
-					onInput={e => setEmail(e.target.value)}
-					placeholder="Email"
-				/>
+				type="email"
+				value={email}
+				onInput={e => setEmail(e.target.value)}
+				placeholder="Email"
+					required
+							/>
 				<br /><br />
 				<input
 					value={password}
